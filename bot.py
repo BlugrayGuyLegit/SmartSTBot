@@ -56,6 +56,11 @@ async def monitor_pages():
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}')
+    # Send a message indicating that the bot is online
+    channel = client.get_channel(CHANNEL_ID)
+    await channel.send("I'm online now!")
+
+    # Start monitoring pages and setting custom status
     client.loop.create_task(monitor_pages())
     client.loop.create_task(set_custom_status(client))
 
