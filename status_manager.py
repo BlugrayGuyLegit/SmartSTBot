@@ -1,5 +1,6 @@
 import discord
 import random
+import asyncio
 
 # List of custom statuses
 statuses = [
@@ -15,5 +16,5 @@ async def set_custom_status(client):
         status = random.choice(statuses)
         # Set the bot's status
         await client.change_presence(activity=discord.Game(name=status))
-        # Wait for an hour before changing the status again
-        await asyncio.sleep(5)
+        # Wait for 3 seconds before changing the status again
+        await asyncio.sleep(3)
