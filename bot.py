@@ -10,7 +10,7 @@ from status_manager import set_custom_status  # Import the status manager
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
-CHANNEL_ID_YOUTUBE = 'YOUR_YOUTUBE_CHANNEL_ID'  # Remplacez par l'ID de votre chaîne YouTube
+CHANNEL_ID_YOUTUBE = 'UCsSsgPaZ2GSmO6il8Cb5iGA'
 URL_TO_MONITOR = 'https://dafuqboom.shop'
 
 if not TOKEN or not CHANNEL_ID or not YOUTUBE_API_KEY or not CHANNEL_ID_YOUTUBE:
@@ -32,7 +32,7 @@ def get_latest_video():
     youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
     request = youtube.search().list(
         part='snippet',
-        channelId=YOUTUBE_CHANNEL_ID,
+        channelId=CHANNEL_ID_YOUTUBE,
         order='date',
         type='video'
     )
