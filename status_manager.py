@@ -12,4 +12,4 @@ async def set_custom_status(client):
         # Set the bot's status
         await client.change_presence(activity=discord.Game(name=status))
         # Wait for 3 seconds before changing the status again
-        await asyncio.sleep(12)
+        await asyncio.sleep(60)
