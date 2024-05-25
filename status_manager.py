@@ -1,18 +1,11 @@
 import discord
-import random
-import asyncio
 
-# List of custom statuses
-statuses = [
-    "Look at the DaFuq!?Boom! Social",
-    "BlugrayGuy"
-]
+custom_status = "BlugrayGuy.com"
 
 async def set_custom_status(client):
-    while True:
-        # Choose a random status from the list
-        status = random.choice(statuses)
-        # Set the bot's status
-        await client.change_presence(activity=discord.Game(name=status))
-        # Wait for 60 seconds before changing the status again
-        await asyncio.sleep(60)
+    await client.change_presence(activity=discord.Game(name=custom_status))
+
+# Exécution du gestionnaire de statut
+client = discord.Client()
+client.loop.create_task(set_custom_status(client))
+client.run('TOKEN')
