@@ -1,8 +1,6 @@
 name: Monitor Page Updates
 
 on:
-  schedule:
-    - cron: '*/5 * * * *' # Exécute toutes les 5 minutes
   push:
     branches:
       - main
