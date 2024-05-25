@@ -32,7 +32,7 @@ def get_latest_video():
     youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
     request = youtube.search().list(
         part='snippet',
-        channelId=CHANNEL_ID_YOUTUBE,
+        channelId=YOUTUBE_CHANNEL_ID,
         order='date',
         type='video'
     )
