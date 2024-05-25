@@ -3,13 +3,14 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import asyncio
+from status_manager import set_custom_status
 
-# Configuration
+
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 URLS_TO_MONITOR = [
-    'https://youtube.com/@DaFuqBoom/videos',  
-    'https://dafuqboom.shop/'   
+    'https://youtube.com/@DaFuqBoom/videos',
+    'https://dafuqboom.shop/'
 ]
 
 if not TOKEN or not CHANNEL_ID:
@@ -56,5 +57,6 @@ async def monitor_pages():
 async def on_ready():
     print(f'Logged in as {client.user}')
     client.loop.create_task(monitor_pages())
+    client.loop.create_task(set_custom_status(client))
 
 client.run(TOKEN)
