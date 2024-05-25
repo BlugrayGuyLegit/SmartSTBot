@@ -3,7 +3,10 @@ import random
 import asyncio
 
 # List of custom statuses
-statuses = "Look at the DaFuq!?Boom! Social"
+statuses = [
+    "Look at the DaFuq!?Boom! Social",
+    "BlugrayGuy"
+]
 
 async def set_custom_status(client):
     while True:
