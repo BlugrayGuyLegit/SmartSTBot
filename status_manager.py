@@ -1,14 +1,15 @@
 import discord
+import random
+import asyncio
 
-intents = discord.Intents.default()
-client = discord.Client(intents=intents)
-
-custom_status = "BlugrayGuy.com"
+statuses = [
+    "Looking the Boom's merch",
+    "Looking the Boom's channel",
+    "BlugrayGuy.com"
+]
 
 async def set_custom_status(client):
-    await client.change_presence(activity=discord.Game(name=custom_status))
-
-# Exécution du gestionnaire de statut
-client = discord.Client()
-client.loop.create_task(set_custom_status(client))
-client.run('TOKEN')
+    while True:
+        status = random.choice(statuses)
+        await client.change_presence(activity=discord.Game(name=status))
+        await asyncio.sleep(60) 
