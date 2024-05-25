@@ -4,7 +4,12 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import asyncio
-from status_manager import set_custom_status  # Import the status manager
+from status_manager import set_custom_status  # Importez le gestionnaire de statut
+
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
+
+client.loop.create_task(set_custom_status())
 
 # Configuration
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
