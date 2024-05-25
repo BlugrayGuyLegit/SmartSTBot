@@ -1,5 +1,8 @@
 import discord
 
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
+
 custom_status = "BlugrayGuy.com"
 
 async def set_custom_status(client):
