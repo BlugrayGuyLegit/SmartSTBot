@@ -7,7 +7,8 @@ statuses = [
     "BlugrayGuy.com",
     "Smart Bot",
     "Check boom's social every time",
-    "24/7 bot"
+    "24/7 bot",
+    "Made by BlugrayGuy"
 ]
 
 async def set_custom_status(client):
@@ -17,4 +18,4 @@ async def set_custom_status(client):
         # Set the bot's status
         await client.change_presence(activity=discord.Game(name=status))
         # Wait for 3 seconds before changing the status again
-        await asyncio.sleep(10)
+        await asyncio.sleep(12)
