@@ -25,13 +25,4 @@ async def send_message(channel_id, content):
     else:
         print(f"Channel with ID {channel_id} not found.")
 
-async def send_example_message():
-    channel_id = os.getenv('CHANNEL_ID')
-    if channel_id:
-        await send_message(channel_id, "This is an example message sent to a specified channel.")
-    else:
-        print("CHANNEL_ID not found in secrets.")
-
-client.loop.create_task(send_example_message())
-
 client.run(os.getenv('DISCORD_BOT_TOKEN'))
