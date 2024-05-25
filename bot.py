@@ -1,20 +1,20 @@
 import discord
+from googleapiclient.discovery import build
 import requests
 from bs4 import BeautifulSoup
 import os
 import asyncio
-from status_manager import set_custom_status
+from status_manager import set_custom_status  # Import the status manager
 
-
+# Configuration
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
-URLS_TO_MONITOR = [
-    'https://youtube.com/@DaFuqBoom/videos',
-    'https://dafuqboom.shop/'
-]
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
+CHANNEL_ID_YOUTUBE = 'UCsSsgPaZ2GSmO6il8Cb5iGA'
+URL_TO_MONITOR = 'https://dafuqboom.shop'
 
-if not TOKEN or not CHANNEL_ID:
-    raise ValueError("TOKEN and CHANNEL_ID must be set")
+if not TOKEN or not CHANNEL_ID or not YOUTUBE_API_KEY or not CHANNEL_ID_YOUTUBE:
+    raise ValueError("TOKEN, CHANNEL_ID, YOUTUBE_API_KEY, and CHANNEL_ID_YOUTUBE must be set")
 
 # Create an instance of a Client
 intents = discord.Intents.default()
@@ -27,41 +27,49 @@ def get_page_content(url):
     soup = BeautifulSoup(response.content, 'html.parser')
     return soup.get_text()  # Or any specific part of the page you want to monitor
 
-async def monitor_pages():
+# Function to get the latest video from a YouTube channel
+def get_latest_video():
+    youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+    request = youtube.search().list(
+        part='snippet',
+        channelId=CHANNEL_ID_YOUTUBE,
+        order='date',
+        type='video'
+    )
+    response = request.execute()
+    return response['items'][0] if response['items'] else None
+
+async def check_new_content():
     await client.wait_until_ready()
     channel = client.get_channel(CHANNEL_ID)
 
     while not client.is_closed():
-        for index, url in enumerate(URLS_TO_MONITOR):
-            # Get the previous content from a local file
-            try:
-                with open(f'previous_content_{index}.txt', 'r') as file:
-                    previous_content = file.read()
-            except FileNotFoundError:
-                previous_content = ''
+        # Check for new video on YouTube channel
+        latest_video = get_latest_video()
+        if latest_video:
+            video_title = latest_video['snippet']['title']
+            video_link = f"https://www.youtube.com/watch?v={latest_video['id']['videoId']}"
+            await channel.send(f"New video uploaded: {video_title}\n{video_link}")
 
-            # Get the current content of the page
-            current_content = get_page_content(url)
-
-            # Compare the content and send a message if there is an update
-            if current_content != previous_content:
-                await channel.send(f'The page at {url} has been updated.')
-
-                # Update the previous content file
-                with open(f'previous_content_{index}.txt', 'w') as file:
-                    file.write(current_content)
+        # Check for updates on the website
+        current_content = get_page_content(URL_TO_MONITOR)
+        try:
+            with open('previous_content.txt', 'r') as file:
+                previous_content = file.read()
+        except FileNotFoundError:
+            previous_content = ''
+        
+        if current_content != previous_content:
+            await channel.send(f"The website at {URL_TO_MONITOR} has been updated.")
+            with open('previous_content.txt', 'w') as file:
+                file.write(current_content)
 
         await asyncio.sleep(300)  # Wait for 5 minutes before checking again
 
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}')
-    # Send a message indicating that the bot is online
-    channel = client.get_channel(CHANNEL_ID)
-    await channel.send("I'm online now!")
-
-    # Start monitoring pages and setting custom status
-    client.loop.create_task(monitor_pages())
-    client.loop.create_task(set_custom_status(client))
+    client.loop.create_task(check_new_content())
+    client.loop.create_task(set_custom_status(client))  # Start custom status manager
 
 client.run(TOKEN)
