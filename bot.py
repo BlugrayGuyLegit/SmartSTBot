@@ -8,7 +8,7 @@ import asyncio
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 URLS_TO_MONITOR = [
-    'https://blugrayguylegit.github.io/Blugray/',  
+    'https://youtube.com/@DaFuqBoom/videos',  
     'https://dafuqboom.shop/'   
 ]
 
