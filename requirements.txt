@@ -2,4 +2,4 @@ discord.py
 google-api-python-client
 requests
 beautifulsoup4
-chatterbot 
+ 
