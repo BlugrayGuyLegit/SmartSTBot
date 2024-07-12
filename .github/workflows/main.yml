@@ -23,6 +23,7 @@ jobs:
 
     - name: Install dependencies
       run: pip install -r requirements.txt
+           pip install pytz
 
     - name: Run bot
       run: python bot.py
