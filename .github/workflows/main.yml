@@ -24,6 +24,11 @@ jobs:
     - name: purge cache
       run: pip cache purge
 
+    - name: chatterbot
+      run: pip show chatterbot
+           pip install chatterbot
+           pip show chatterbot
+
     - name: update
       run: pip install --upgrade pip
 
