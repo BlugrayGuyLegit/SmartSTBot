@@ -16,7 +16,15 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    
+dctriggers = [':dead_chat:', '# DEAD CHAT', 'dead chat', 'chat is ded', 'dead general']
+
+if any(message.content.lower().startswith(dctriggers) for opinion in dctriggers):
+    await message.channel.send('I agree you're opinion, someone need to revive the chat to keep it alive 😇!')
+
+broimded = [':bro_im_ded:', 'Bro im dead', 'bro im ded', 'im dead', 'im ded', 'bro is ded', 'bro is dead']
+
+if any(message.content.lower().startswith(broimded) for revive in broimded):
+    await message.channel.send('/revive')
 
 # Liste de salutations possibles
 greetings = [
