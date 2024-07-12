@@ -1,6 +1,7 @@
 import discord
 import os
 import random
+import asyncio
 
 intents = discord.Intents.default()
 intents.presences = True
@@ -11,20 +12,11 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print(f'Logged in as {client.user.name}')
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
+# Liste de déclencheurs pour "dead chat"
 dctriggers = [':dead_chat:', '# DEAD CHAT', 'dead chat', 'chat is ded', 'dead general']
 
-if any(message.content.lower().startswith(dctriggers) for opinion in dctriggers):
-    await message.channel.send('I agree you\'re opinion, someone need to revive the chat to keep it alive...')
-
+# Liste de déclencheurs pour "bro im ded"
 broimded = [':bro_im_ded:', 'Bro im dead', 'bro im ded', 'im dead', 'im ded', 'bro is ded', 'bro is dead']
-
-if any(message.content.lower().startswith(broimded) for revive in broimded):
-    await message.channel.send('/revive')
 
 # Liste de salutations possibles
 greetings = [
@@ -44,8 +36,17 @@ negative_responses = ['bad', 'not good', 'terrible', 'sad', 'awful']
 
 @client.event
 async def on_message(message):
-    # Ignorer les messages du bot lui-même
     if message.author == client.user:
+        return
+
+    # Vérifier si le message correspond à un déclencheur de "dead chat"
+    if any(trigger in message.content.lower() for trigger in dctriggers):
+        await message.channel.send('I agree with your opinion, someone needs to revive the chat to keep it alive...')
+        return
+
+    # Vérifier si le message correspond à un déclencheur de "bro im ded"
+    if any(trigger in message.content.lower() for trigger in broimded):
+        await message.channel.send('/revive')
         return
 
     # Vérifier si le message commence par une salutation
