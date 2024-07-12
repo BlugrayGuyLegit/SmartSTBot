@@ -1,47 +1,62 @@
 import discord
+from discord.ext import commands
+from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer
+from chatterbot.logic import LogicAdapter
+from chatterbot.conversation import Statement
 import os
-import openai
-import asyncio
-from dotenv import load_dotenv
 
-# Charger les variables d'environnement à partir du fichier .env
-load_dotenv()
-
-# Configurer les clés API à partir des variables d'environnement
-discord_token = os.getenv('DISCORD_BOT_TOKEN')
-openai.api_key = os.getenv('OPENAI_API_KEY')
-
+# Configuration du bot Discord
 intents = discord.Intents.default()
-intents.presences = True
 intents.members = True
-client = discord.Client(intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-@client.event
+# Configuration de ChatterBot
+chatbot = ChatBot(
+    'GToiletBot',
+    storage_adapter='chatterbot.storage.SQLStorageAdapter',
+    logic_adapters=[
+        {
+            'import_path': 'chatterbot.logic.BestMatch',
+            'default_response': "Hmm, I'm not sure I understand. Could you rephrase?",
+            'maximum_similarity_threshold': 0.90
+        },
+        {
+            'import_path': 'responses.GToiletAdapter',
+        }
+    ],
+    database_uri='sqlite:///database.sqlite3'
+)
+
+# Entraîner ChatterBot avec des données de corpus
+trainer = ChatterBotCorpusTrainer(chatbot)
+trainer.train('chatterbot.corpus.english')  # Entraîner avec des corpus anglais
+
+# Événement lorsque le bot Discord est prêt
+@bot.event
 async def on_ready():
-    print(f'Logged in as {client.user.name}')
+    print(f'Logged in as {bot.user.name}')
 
-@client.event
+# Événement pour répondre aux messages
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
 
-    # Vérifier si le message contient le mot "time"
-    if 'time' in message.content.lower():
-        await message.channel.send('Insérez ici votre réponse pour l\'heure à Washington, D.C.')
+    # Vérifier si le message mentionne le bot ou répond au bot
+    if bot.user.mentioned_in(message) or message.reference:
+        # Obtenir le message précédent de l'utilisateur
+        previous_message = await message.channel.fetch_message(message.reference.message_id) if message.reference else None
+        user_input = previous_message.content if previous_message else message.content
+        
+        # Obtenir la réponse de ChatterBot en fonction de l'entrée de l'utilisateur
+        response = chatbot.get_response(user_input)
+        
+        # Envoyer la réponse de ChatterBot dans le même canal Discord
+        await message.channel.send(response)
 
-    # Utiliser l'API OpenAI pour répondre à tout autre message
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=message.content,
-        max_tokens=150
-    )
-    await message.channel.send(response.choices[0].text.strip())
+# Récupérer le token du bot à partir de GitHub secret
+discord_token = os.getenv('DISCORD_BOT_TOKEN')
 
-async def send_message(channel_id, content):
-    channel = client.get_channel(int(channel_id))
-    if channel:
-        await channel.send(content)
-    else:
-        print(f"Channel with ID {channel_id} not found.")
-
-client.run(discord_token)
+# Démarrer le bot Discord
+bot.run(discord_token)
