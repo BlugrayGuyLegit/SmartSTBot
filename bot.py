@@ -27,7 +27,7 @@ greetings = [
 # Liste de réponses aux salutations
 greeting_responses = [
     'Hi {user}!', 'Hello {user}, how are you?', 'Hey {user}!', 'Yo {user}!', 'What\'s up {user}?',
-    'Howdy {user}!', 'Hola {user}!', 'Bonjour {user}!', 'Salut {user}!', 'Greetings {user}!'
+    'Howdy {user}!', 'Hola {user}!', 'Hey there {user}!', 'Sup {user}!', 'Greetings {user}!'
 ]
 
 # Liste de réponses positives et négatives
