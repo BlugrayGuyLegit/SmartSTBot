@@ -28,12 +28,13 @@ jobs:
       run: pip install --upgrade pip
 
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: pip install pyyaml==5.4.1
            pip install setuptools
            pip install wheel
            pip install Cython
            pip install cymem
            pip install preshed
+           pip install -r requirements.txt
            
     - name: Run bot
       run: python bot.py & python responses.py
