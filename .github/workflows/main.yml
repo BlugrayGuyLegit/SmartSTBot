@@ -26,8 +26,11 @@ jobs:
 
     - name: chatterbot
       run: pip show chatterbot
+           pip show chatterbot-corpus
            pip install chatterbot
+           pip install chatterbot-corpus
            pip show chatterbot
+           pip show chatterbot-corpus
 
     - name: update
       run: pip install --upgrade pip
