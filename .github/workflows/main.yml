@@ -29,6 +29,7 @@ jobs:
            pip show chatterbot-corpus
            pip install chatterbot
            pip install chatterbot-corpus
+           pip install ChatterBot
            pip show chatterbot
            pip show chatterbot-corpus
 
