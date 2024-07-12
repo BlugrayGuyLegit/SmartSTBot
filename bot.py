@@ -22,8 +22,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    # Check if bot is mentioned or directly replied to
-    if client.user.mentioned_in(message) or message.reference:
+    if client.user.mentioned_in(message) or (message.reference and message.reference.resolved):
         # Call Wit.ai to understand the message
         response = wit_ai_request(message.content)
         
@@ -32,6 +31,8 @@ async def on_message(message):
             await message.channel.send(response)
         else:
             await message.channel.send("Sorry, I don't understand.")
+    
+    # Additional message handling logic can be added here
 
 # Function to call Wit.ai API
 def wit_ai_request(message):
