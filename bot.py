@@ -3,6 +3,7 @@ import os
 import random
 import asyncio
 from datetime import datetime
+import pytz
 
 intents = discord.Intents.default()
 intents.presences = True
@@ -58,8 +59,9 @@ async def on_message(message):
     
     # Vérifier si le message contient le mot "time"
     if 'time' in message.content.lower():
-        current_time = datetime.utcnow().strftime('%H:%M:%S')
-        await message.channel.send(f'The current time is {current_time} (UTC USA Washington)')
+        timezone = pytz.timezone('America/New_York')  # Fuseau horaire de Washington, D.C.
+        current_time = datetime.now(timezone).strftime('%H:%M:%S')
+        await message.channel.send(f'The current time is {current_time} in Washington, D.C. (ET)')
         return
     
     # Vérifier les réponses aux questions "how are you" ou similaires
