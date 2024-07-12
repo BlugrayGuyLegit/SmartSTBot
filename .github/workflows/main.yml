@@ -26,6 +26,7 @@ jobs:
            pip install pytz
            pip install python-dotenv
            pip install openai discord.py
+           pip install openai
 
     - name: Run bot
       run: python bot.py
