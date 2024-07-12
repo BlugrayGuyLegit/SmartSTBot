@@ -21,10 +21,23 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: purge cache
+      run: pip cache purge
+
+    - name: update
+      run: pip install --upgrade pip
+
     - name: Install dependencies
       run: pip install -r requirements.txt
-           pip install discord.py chatterbot chatterbot-corpus
-
+           pip install setuptools
+           pip install wheel
+           pip install Cython
+           pip install cymem
+           pip install preshed
+           pip install discord.py
+           pip install chatterbot
+           pip install chatterbot-corpus
+           
     - name: Run bot
       run: python bot.py & python responses.py
       env:
