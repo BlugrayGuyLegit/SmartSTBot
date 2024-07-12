@@ -27,9 +27,10 @@ jobs:
            pip install python-dotenv
            pip install openai discord.py
            pip install openai
+           pip install discord.py chatterbot chatterbot-corpus
 
     - name: Run bot
-      run: python bot.py
+      run: python bot.py & python responses.py
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
