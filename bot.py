@@ -1,62 +1,32 @@
 import discord
-from discord.ext import commands
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
-from chatterbot.logic import LogicAdapter
-from chatterbot.conversation import Statement
-import os
+import socket
 
 # Configuration du bot Discord
-intents = discord.Intents.default()
-intents.members = True
-bot = commands.Bot(command_prefix='!', intents=intents)
+client = discord.Client()
 
-# Configuration de ChatterBot
-chatbot = ChatBot(
-    'GToiletBot',
-    storage_adapter='chatterbot.storage.SQLStorageAdapter',
-    logic_adapters=[
-        {
-            'import_path': 'chatterbot.logic.BestMatch',
-            'default_response': "Hmm, I'm not sure I understand. Could you rephrase?",
-            'maximum_similarity_threshold': 0.90
-        },
-        {
-            'import_path': 'responses.GToiletAdapter',
-        }
-    ],
-    database_uri='sqlite:///database.sqlite3'
-)
+# Configuration de la connexion à ChatScript
+HOST = 'localhost'  # Adresse IP du serveur ChatScript
+PORT = 1024          # Port utilisé par le serveur ChatScript
 
-# Entraîner ChatterBot avec des données de corpus
-trainer = ChatterBotCorpusTrainer(chatbot)
-trainer.train('chatterbot.corpus.english')  # Entraîner avec des corpus anglais
+def chat_with_chatscript(message):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((HOST, PORT))
+        s.sendall(message.encode())
+        response = s.recv(1024).decode()
+        return response
 
-# Événement lorsque le bot Discord est prêt
-@bot.event
+@client.event
 async def on_ready():
-    print(f'Logged in as {bot.user.name}')
+    print(f'Logged in as {client.user}')
 
-# Événement pour répondre aux messages
-@bot.event
+@client.event
 async def on_message(message):
-    if message.author == bot.user:
+    if message.author == client.user:
         return
 
-    # Vérifier si le message mentionne le bot ou répond au bot
-    if bot.user.mentioned_in(message) or message.reference:
-        # Obtenir le message précédent de l'utilisateur
-        previous_message = await message.channel.fetch_message(message.reference.message_id) if message.reference else None
-        user_input = previous_message.content if previous_message else message.content
-        
-        # Obtenir la réponse de ChatterBot en fonction de l'entrée de l'utilisateur
-        response = chatbot.get_response(user_input)
-        
-        # Envoyer la réponse de ChatterBot dans le même canal Discord
-        await message.channel.send(response)
+    # Envoyer le message à ChatScript et recevoir la réponse
+    chat_response = chat_with_chatscript(message.content)
+    await message.channel.send(chat_response)
 
-# Récupérer le token du bot à partir de GitHub secret
-discord_token = os.getenv('DISCORD_BOT_TOKEN')
-
-# Démarrer le bot Discord
-bot.run(discord_token)
+# Exécuter le bot Discord avec le token approprié
+client.run('DISCORD_BOT_TOKEN')
