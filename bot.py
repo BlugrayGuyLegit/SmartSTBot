@@ -2,6 +2,7 @@ import discord
 import os
 import random
 import asyncio
+from datetime import datetime
 
 intents = discord.Intents.default()
 intents.presences = True
@@ -53,6 +54,12 @@ async def on_message(message):
     if any(message.content.lower().startswith(greeting) for greeting in greetings):
         response = random.choice(greeting_responses).format(user=message.author.name)
         await message.channel.send(response)
+        return
+    
+    # Vérifier si le message contient le mot "time"
+    if 'time' in message.content.lower():
+        current_time = datetime.utcnow().strftime('%H:%M:%S')
+        await message.channel.send(f'The current time is {current_time} (UTC USA Washington)')
         return
     
     # Vérifier les réponses aux questions "how are you" ou similaires
