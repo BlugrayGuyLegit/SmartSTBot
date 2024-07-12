@@ -38,6 +38,7 @@ jobs:
 
     - name: update
       run: pip install --upgrade pip
+           pip install --force-reinstall chatterbot
 
     - name: Install dependencies
       run: pip install -r requirements.txt
@@ -48,7 +49,7 @@ jobs:
            pip install preshed 
            
     - name: Run bot
-      run: python bot.py & python responses.py
+      run: python3 bot.py & python3 responses.py
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
