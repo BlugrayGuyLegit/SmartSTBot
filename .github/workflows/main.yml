@@ -24,6 +24,8 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
            pip install pytz
+           pip install python-dotenv
+           pip install openai discord.py
 
     - name: Run bot
       run: python bot.py
