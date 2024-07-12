@@ -24,29 +24,18 @@ jobs:
     - name: purge cache
       run: pip cache purge
 
-    - name: chatterbot
-      run: pip show chatterbot
-           pip show chatterbot-corpus
-           pip install chatterbot
-           pip install chatterbot-corpus
-           pip install ChatterBot
-           pip show chatterbot
-           pip show chatterbot-corpus
+    - name: ChatScript Installation
+      run: git clone https://github.com/bwilcox-1234/ChatScript.git
+           cd ChatScript
 
     - name: site
       run: python -m site --user-site
 
     - name: update
       run: pip install --upgrade pip
-           pip install --force-reinstall chatterbot
-
+           
     - name: Install dependencies
       run: pip install -r requirements.txt
-           pip install setuptools
-           pip install wheel
-           pip install Cython
-           pip install cymem
-           pip install preshed 
            
     - name: Run bot
       run: python3 bot.py & python3 responses.py
