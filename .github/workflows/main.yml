@@ -23,10 +23,6 @@ jobs:
 
     - name: Install dependencies
       run: pip install -r requirements.txt
-           pip install pytz
-           pip install python-dotenv
-           pip install openai discord.py
-           pip install openai
            pip install discord.py chatterbot chatterbot-corpus
 
     - name: Run bot
