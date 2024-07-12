@@ -32,6 +32,9 @@ jobs:
            pip show chatterbot
            pip show chatterbot-corpus
 
+    - name: site
+      run: python -m site --user-site
+
     - name: update
       run: pip install --upgrade pip
 
