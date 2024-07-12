@@ -34,9 +34,6 @@ jobs:
            pip install Cython
            pip install cymem
            pip install preshed
-           pip install discord.py
-           pip install chatterbot
-           pip install chatterbot-corpus
            
     - name: Run bot
       run: python bot.py & python responses.py
