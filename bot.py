@@ -2,34 +2,38 @@ import os
 import discord
 import requests
 
-# Configuration de Discord
+# Discord configuration
 intents = discord.Intents.default()
 intents.messages = True
 client = discord.Client(intents=intents)
 
-# Configuration de Wit.ai
+# Wit.ai configuration
 WIT_AI_TOKEN = "WH74G7K3UI4NCVC5M5M5PLAB2HEBIUKW"
 WIT_AI_API_URL = "https://api.wit.ai/message?v=20240712&q="
 
-# Événement de connexion du bot
+# Event: Bot is ready
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user.name}')
 
-# Événement de réception de message sur Discord
+# Event: Message received
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
     
-    # Appel à Wit.ai pour comprendre le message
-    response = wit_ai_request(message.content)
-    
-    # Récupérer la réponse de Wit.ai
-    if response:
-        await message.channel.send(response)
+    # Check if bot is mentioned or directly replied to
+    if client.user.mentioned_in(message) or message.reference:
+        # Call Wit.ai to understand the message
+        response = wit_ai_request(message.content)
+        
+        # Respond based on Wit.ai response
+        if response:
+            await message.channel.send(response)
+        else:
+            await message.channel.send("Sorry, I don't understand.")
 
-# Fonction pour appeler l'API Wit.ai
+# Function to call Wit.ai API
 def wit_ai_request(message):
     headers = {
         'Authorization': f'Bearer {WIT_AI_TOKEN}',
@@ -41,11 +45,11 @@ def wit_ai_request(message):
     response = requests.get(WIT_AI_API_URL, headers=headers, params=params)
     data = response.json()
     
-    # Récupérer la réponse de Wit.ai
+    # Retrieve Wit.ai intent name
     if 'intents' in data and data['intents']:
         return data['intents'][0]['name']
     else:
-        return "Désolé, je ne comprends pas."
+        return None
 
-# Démarrer le bot Discord
+# Run the Discord bot
 client.run(os.getenv('DISCORD_BOT_TOKEN'))
