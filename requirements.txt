@@ -3,4 +3,3 @@ google-api-python-client
 requests
 beautifulsoup4
 chatterbot 
-chatterbot-corpus==1.2.0
