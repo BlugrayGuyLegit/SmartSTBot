@@ -9,7 +9,7 @@ client = discord.Client(intents=intents)
 
 # Wit.ai configuration
 WIT_AI_TOKEN = "PEQZ6JKGNRTNJUDGV6GQBEABT4JEI6UJ"
-WIT_AI_API_URL = "https://api.wit.ai/message?v=20240712&q="
+WIT_AI_API_URL = "https://api.wit.ai/message?v=20240712&q=bot"
 
 # Bot ready event
 @client.event
