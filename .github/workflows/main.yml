@@ -24,8 +24,8 @@ jobs:
     - name: purge cache
       run: pip cache purge
 
-    - name: Wit AI Installation
-      run: pip install discord.py requests
+    - name: Time Installation
+      run: pip install pytz
 
     - name: site
       run: python -m site --user-site
