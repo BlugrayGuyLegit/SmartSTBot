@@ -17,6 +17,10 @@ async def on_ready():
 # Liste de déclencheurs pour "dead chat"
 dctriggers = [':dead_chat:', '# DEAD CHAT', 'dead chat', 'chat is ded', 'dead general']
 
+bye = ['bye', 'goodbye', 'cia', 'ciao', 'seya', 'seeya', 'syl', 'ttyl', 'see you later', 'talk to you later']
+
+gn = ['gn', 'goodnight', 'good night']
+
 # Liste de déclencheurs pour "bro im ded"
 broimded = [':bro_im_ded:', 'Bro im dead', 'bro im ded', 'im dead', 'im ded', 'bro is ded', 'bro is dead']
 
@@ -49,6 +53,14 @@ async def on_message(message):
     # Vérifier si le message correspond à un déclencheur de "bro im ded"
     if any(trigger in message.content.lower() for trigger in broimded):
         await message.channel.send('/revive')
+        return
+
+    if any(trigger in message.content.lower() for trigger in gn):
+        await message.channel.send('goodnight {user}!')
+        return
+
+    if any(trigger in message.content.lower() for trigger in bye):
+        await message.channel.send('bye {user}! see you later!')
         return
 
     # Vérifier si le message commence par une salutation
