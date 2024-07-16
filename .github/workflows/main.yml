@@ -37,7 +37,7 @@ jobs:
       run: pip install -r requirements.txt
            
     - name: Run bot
-      run: python3 bot.py & python3 status_manager.py
+      run: python3 bot.py
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
