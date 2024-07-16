@@ -56,11 +56,11 @@ async def on_message(message):
         return
 
     if any(trigger in message.content.lower() for trigger in gn):
-        await message.channel.send('goodnight {user}!')
+        await message.channel.send('goodnight!')
         return
 
     if any(trigger in message.content.lower() for trigger in bye):
-        await message.channel.send('bye {user}! see you later!')
+        await message.channel.send('bye, see you later!')
         return
 
     # Vérifier si le message commence par une salutation
