@@ -3,9 +3,8 @@ import random
 import asyncio
 
 statuses = [
-    "Looking the Boom's merch",
-    "Looking the Boom's channel",
-    "BlugrayGuy.com"
+    "I reply to your hello !",
+    "Powered by KeamsOS"
 ]
 
 async def set_custom_status(client):
