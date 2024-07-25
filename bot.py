@@ -12,7 +12,7 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.Online, activity=discord.Game(f'say: Hey @{client.user.name}'))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game(f'say: Hey @{client.user.name}'))
     print(f'Logged in as {client.user.name}')
 
 # Liste de déclencheurs pour "dead chat"
