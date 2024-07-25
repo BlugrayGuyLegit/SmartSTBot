@@ -7,37 +7,135 @@ on:
   schedule:
     - cron: '59 */5 * * *'  
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Notify Discord - Workflow run started
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Workflow run started\", \"description\": \"Workflow started for $GITHUB_REPOSITORY on $GITHUB_REF by $GITHUB_ACTOR\", \"color\": 3447003}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
     - name: Checkout repository
       uses: actions/checkout@v2
+
+    - name: Notify Discord - Set up Python started
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Set up Python started\", \"description\": \"Setting up Python for $GITHUB_REPOSITORY on $GITHUB_REF by $GITHUB_ACTOR\", \"color\": 10066329}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
 
-    - name: purge cache
+    - name: Notify Discord - Set up Python completed
+      if: success()
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Set up Python completed\", \"description\": \"Python setup completed for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 3066993}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Notify Discord - Purge cache started
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Purge cache started\", \"description\": \"Purging pip cache for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 10066329}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Purge cache
       run: pip cache purge
+
+    - name: Notify Discord - Time Installation started
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Time Installation started\", \"description\": \"Installing pytz for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 10066329}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
 
     - name: Time Installation
       run: pip install pytz
 
-    - name: site
+    - name: Notify Discord - Site command
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Site command\", \"description\": \"Running site command for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 10066329}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Site
       run: python -m site --user-site
 
-    - name: update
+    - name: Notify Discord - Update started
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Update started\", \"description\": \"Updating pip for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 10066329}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Update
       run: pip install --upgrade pip
-           
+
+    - name: Notify Discord - Install dependencies started
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Install dependencies started\", \"description\": \"Installing dependencies for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 10066329}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
     - name: Install dependencies
       run: pip install -r requirements.txt
-           
+
+    - name: Notify Discord - Install dependencies completed
+      if: success()
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Install dependencies completed\", \"description\": \"Dependencies installed for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 3066993}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Notify Discord - Run bot started
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Run bot started\", \"description\": \"Running bot for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 16753920}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
     - name: Run bot
-      run: python3 bot.py
+      run: |
+        python3 bot.py | tee bot_logs.txt
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+
+    - name: Notify Discord - Send bot logs
+      if: always()
+      run: |
+        LOG_CONTENT=$(cat bot_logs.txt)
+        LOG_CONTENT_CUT=$(echo "$LOG_CONTENT" | tail -n 20) # To keep the logs concise
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Bot logs\", \"description\": \"\`\`\`$LOG_CONTENT_CUT\`\`\`\", \"color\": 16753920}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Notify Discord - Workflow completed
+      if: always()
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Workflow completed\", \"description\": \"Workflow completed for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 3066993}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+    - name: Notify Discord - Failure
+      if: failure()
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d "{\"embeds\": [{\"title\": \"Workflow failed\", \"description\": \"Workflow failed for $GITHUB_REPOSITORY on $GITHUB_REF\", \"color\": 15158332}]}" \
+             ${{ secrets.DISCORD_WEBHOOK_URL }}
