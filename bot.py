@@ -4,6 +4,11 @@ from googlesearch import search
 import requests
 from bs4 import BeautifulSoup
 
+intents = discord.Intents.default()  # Crée les intents par défaut
+intents.message_content = True       # Active l'intent pour lire le contenu des messages
+intents.presences = True             # Active l'intent pour suivre les présences des membres
+intents.members = True               # Active l'intent pour suivre les membres (nécessaire pour certaines actions)
+
 client = discord.Client()
 
 @client.event
