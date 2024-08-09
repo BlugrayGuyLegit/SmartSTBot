@@ -1,7 +1,7 @@
 import random
 
-    # Liste de questions/réponses spécifiques à Skibidi Toilet
-    skibidi_questions = [
+# Liste de questions/réponses spécifiques à Skibidi Toilet
+skibidi_questions = [
     "What is Skibidi Toilet?",
     "Who is the main character in Skibidi Toilet?",
     "What are the Skibidi Toilets fighting against?",
