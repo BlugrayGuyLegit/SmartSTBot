@@ -49,7 +49,7 @@ async def on_message(message):
             
             if site_to_search:
                 search_query = f"{query} site:{site_to_search.lower()}.com"
-                search_results = search(search_query, num_results=5)
+                search_results = list(search(search_query, num_results=5))  # Convertir le générateur en liste
                 
                 if search_results:
                     await message.channel.send(f"Here's the {site_to_search} link I found for '{query}': {search_results[0]}")
@@ -57,7 +57,7 @@ async def on_message(message):
                     await message.channel.send(f"Sorry, I couldn't find any {site_to_search} results for '{query}'.")
             else:
                 # Si aucun site spécifique n'est détecté, on effectue une recherche générale
-                search_results = search(query, num_results=5)
+                search_results = list(search(query, num_results=5))  # Convertir le générateur en liste
                 
                 if search_results:
                     await handle_general_result(search_results[0], message)
