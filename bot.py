@@ -9,7 +9,7 @@ intents.message_content = True       # Active l'intent pour lire le contenu des 
 intents.presences = True             # Active l'intent pour suivre les présences des membres
 intents.members = True               # Active l'intent pour suivre les membres (nécessaire pour certaines actions)
 
-client = discord.Client()
+client = discord.Client(intents=intents)  # Passe les intents au client Discord
 
 @client.event
 async def on_ready():
