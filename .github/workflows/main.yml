@@ -109,7 +109,7 @@ jobs:
 
     - name: Run bot
       run: |
-        python3 bot.py & python3 unknown_responses.py & python3 skibidi_qr.py | tee bot_logs.txt
+        python3 bot.py | tee bot_logs.txt
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
