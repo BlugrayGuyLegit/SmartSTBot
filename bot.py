@@ -4,12 +4,24 @@ from googlesearch import search
 import requests
 from bs4 import BeautifulSoup
 
-intents = discord.Intents.default()  # Crée les intents par défaut
-intents.message_content = True       # Active l'intent pour lire le contenu des messages
-intents.presences = True             # Active l'intent pour suivre les présences des membres
-intents.members = True               # Active l'intent pour suivre les membres (nécessaire pour certaines actions)
+intents = discord.Intents.default()
+intents.message_content = True
+intents.presences = True
+intents.members = True
 
-client = discord.Client(intents=intents)  # Passe les intents au client Discord
+client = discord.Client(intents=intents)
+
+# Liste des sites que le bot peut détecter
+site_keywords = {
+    'youtube': 'YouTube',
+    'spotify': 'Spotify',
+    'twitter': 'Twitter',
+    'instagram': 'Instagram',
+    'wikipedia': 'Wikipedia',
+    'facebook': 'Facebook',
+    'twitch': 'Twitch',
+    'reddit': 'Reddit'
+}
 
 @client.event
 async def on_ready():
@@ -20,30 +32,47 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    if client.user in message.mentions:  # Si le bot est mentionné
-        query = message.content.replace(f'@{client.user.name}', '').strip()
+    if client.user in message.mentions:
+        query = message.content.replace(f'@{client.user.name}', '').strip().lower()
         
         if query:
             await message.channel.send("Let me check that for you...")
             
-            # Effectuer une recherche Google
-            search_results = search(query, num_results=5)
+            site_to_search = None
             
-            for url in search_results:
-                try:
-                    # Obtenir le contenu de la page
-                    response = requests.get(url)
-                    soup = BeautifulSoup(response.text, 'html.parser')
-                    
-                    # Extraire le texte de la page (simplement les paragraphes pour cet exemple)
-                    paragraphs = soup.find_all('p')
-                    if paragraphs:
-                        # Envoyer les premières lignes de la première page trouvée
-                        await message.channel.send(f"Here is what I found:\n\n{paragraphs[0].text[:500]}...\n\nSource: {url}")
-                        return
-                except Exception as e:
-                    print(f"Error processing {url}: {e}")
+            # Détection du site dans la requête
+            for keyword in site_keywords:
+                if keyword in query:
+                    site_to_search = site_keywords[keyword]
+                    query = query.replace(keyword, '').strip()
+                    break
             
-            await message.channel.send("I couldn't find a good answer, sorry!")
+            if site_to_search:
+                search_query = f"{query} site:{site_to_search.lower()}.com"
+                search_results = search(search_query, num_results=5)
+                
+                if search_results:
+                    await message.channel.send(f"Here's the {site_to_search} link I found for '{query}': {search_results[0]}")
+                else:
+                    await message.channel.send(f"Sorry, I couldn't find any {site_to_search} results for '{query}'.")
+            else:
+                # Si aucun site spécifique n'est détecté, on effectue une recherche générale
+                search_results = search(query, num_results=5)
+                
+                if search_results:
+                    await handle_general_result(search_results[0], message)
+                else:
+                    await message.channel.send("I couldn't find a good answer, sorry!")
+
+async def handle_general_result(url, message):
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        paragraphs = soup.find_all('p')
+        if paragraphs:
+            await message.channel.send(f"Here is what I found:\n\n{paragraphs[0].text[:500]}...\n\nSource: {url}")
+    except Exception as e:
+        print(f"Error processing {url}: {e}")
+        await message.channel.send("I couldn't find a good answer, sorry!")
 
 client.run(os.getenv('DISCORD_BOT_TOKEN'))
