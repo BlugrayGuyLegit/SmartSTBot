@@ -60,7 +60,9 @@ jobs:
              ${{ secrets.DISCORD_WEBHOOK_URL }}
 
     - name: Time Installation
-      run: pip install pytz
+      run: |
+        pip install pytz 
+        pip install googlesearch-python
 
     - name: Notify Discord - Site command
       run: |
